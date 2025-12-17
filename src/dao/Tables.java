@@ -13,7 +13,7 @@ import java.sql.Statement;
 public class Tables {
      public static void main(String[] args){
          try{
-             Connection con = ConectionProvider.getCon();
+             Connection con = ConnectionProvider.getCon();
              Statement st = con.createStatement();
          //    st.executeUpdate("create table appuser(appuser_pk int AUTO_INCREMENT primary key,userRole varchar(200),name varchar(200),dob varchar(50),mobileNumber varchar(50),email varchar(200),username varchar (200),password varchar(200),adress varchar(200))");
              st.executeUpdate("insert into appuser (userRole,name,dob,mobileNumber,email,username,password,adress) values('Admin','Admin','12-12-2002','077200300','admin@gmail.com','admin','2036','Sri Lanka')");

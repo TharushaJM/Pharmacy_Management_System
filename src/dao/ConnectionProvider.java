@@ -9,7 +9,7 @@ import java.sql.DriverManager;
  *
  * @author Tharusha
  */
-public class ConectionProvider {
+public class ConnectionProvider {
     public static Connection getCon(){
         try{
             Class.forName("com.mysql.jdbc.Driver");
