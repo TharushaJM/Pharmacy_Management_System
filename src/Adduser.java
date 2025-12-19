@@ -226,47 +226,47 @@ public class Adduser extends javax.swing.JFrame {
         String email = txtemail.getText();
         String username = txtUsername.getText();
         String password = txtpassword.getText();
-        String address = txtAddress.getText();
+        String adress = txtAddress.getText();
         
         if(name.equals("")){
-            JOptionPane.showConfirmDialog(null, "Name Field is Required");
+            JOptionPane.showMessageDialog(null, "Name Field is Required");
         }else if(dob.equals("")){
-            JOptionPane.showConfirmDialog(null, "Date Of Birth Field is Required");
+            JOptionPane.showMessageDialog(null, "Date Of Birth Field is Required");
         }else if(mobileNumber.equals("")){
-            JOptionPane.showConfirmDialog(null, "Mobile Number Field is Required");
+            JOptionPane.showMessageDialog(null, "Mobile Number Field is Required");
         }else if(!mobileNumber.matches(mobileNumberPattern) || mobileNumber.length() != 10){
-            JOptionPane.showConfirmDialog(null, "Mobile Number Field is Invalid");
+            JOptionPane.showMessageDialog(null, "Mobile Number Field is Invalid");
         }else if(email.equals("")){
-            JOptionPane.showConfirmDialog(null, "Email Field is Required");
+            JOptionPane.showMessageDialog(null, "Email Field is Required");
         }else if(!email.matches(emailPattern )){
-            JOptionPane.showConfirmDialog(null, "Email Field is Invalid");
+            JOptionPane.showMessageDialog(null, "Email Field is Invalid");
         }else if(username.equals("")){
-            JOptionPane.showConfirmDialog(null, "Usernmae Field is Required");
+            JOptionPane.showMessageDialog(null, "Usernmae Field is Required");
         }else if(checkUsername == 1){
-            JOptionPane.showConfirmDialog(null, "Username already exist");
+            JOptionPane.showMessageDialog(null, "Username already exist");
         }else if(password.equals("")){
-            JOptionPane.showConfirmDialog(null, "Passowrd Field is Required");
-        }else if(address.equals("")){
-            JOptionPane.showConfirmDialog(null, "Address Field is Required");
+            JOptionPane.showMessageDialog(null, "Passowrd Field is Required");
+        }else if(adress.equals("")){
+            JOptionPane.showMessageDialog(null, "Address Field is Required");
         }else{
             try{
-                Connection con - ConnectionProvider.getCon();
-                PreparedStatements ps = con.prepareStatement("insert into appuser (userRole,name,dob,mobileNumber,email,username,password,address) values(?,?,?,?,?,?,?,?");
+                Connection con = ConnectionProvider.getCon();
+                PreparedStatement ps = con.prepareStatement("insert into appuser (userRole,name,dob,mobileNumber,email,username,password,adress) values(?,?,?,?,?,?,?,?)");
                 ps.setString(1, userRole);
-                ps.setString(1, name);
+                ps.setString(2, name);
                 ps.setString(3, dob);
                 ps.setString(4, mobileNumber);
                 ps.setString(5, email);
                 ps.setString(6, username);
                 ps.setString(7, password);
-                ps.setString(8, address);
+                ps.setString(8, adress);
                 ps.executeUpdate();
                 JOptionPane.showMessageDialog(null, "User Added Sucsessfully");
                 setVisible(false);
                 new Adduser().setVisible(true);
               
             }
-            catch(Exeption e){
+            catch(Exception e){
                 JOptionPane.showMessageDialog(null, e);
             }
             
