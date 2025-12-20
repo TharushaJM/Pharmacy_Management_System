@@ -22,6 +22,7 @@ public class PharmacistDashboard extends javax.swing.JFrame {
      */
     public PharmacistDashboard() {
         initComponents();
+        setLocationRelativeTo(null);
     }
 
     public PharmacistDashboard(String tempUsername) {
@@ -49,7 +50,6 @@ public class PharmacistDashboard extends javax.swing.JFrame {
         jButton6 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -63,17 +63,27 @@ public class PharmacistDashboard extends javax.swing.JFrame {
         jButton1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jButton1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/addMedicine.png"))); // NOI18N
         jButton1.setText("Add Medicine");
-        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(247, 136, 399, -1));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 140, 399, -1));
 
         jButton2.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jButton2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/viewUser.png"))); // NOI18N
         jButton2.setText("View Medicine");
-        getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(247, 261, 399, -1));
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+        getContentPane().add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 260, 399, -1));
 
         jButton3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jButton3.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/updateUser.png"))); // NOI18N
         jButton3.setText("Update Medicine");
-        getContentPane().add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(247, 386, 399, -1));
+        getContentPane().add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 390, 399, -1));
 
         jButton4.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jButton4.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/logout.png"))); // NOI18N
@@ -83,7 +93,7 @@ public class PharmacistDashboard extends javax.swing.JFrame {
                 jButton4ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(247, 581, 399, -1));
+        getContentPane().add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 630, 399, -1));
 
         jButton5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jButton5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/sellMedicine.png"))); // NOI18N
@@ -93,12 +103,12 @@ public class PharmacistDashboard extends javax.swing.JFrame {
                 jButton5ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(737, 136, 399, -1));
+        getContentPane().add(jButton5, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 140, 399, -1));
 
         jButton6.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jButton6.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/viewBill.png"))); // NOI18N
         jButton6.setText("View Bill");
-        getContentPane().add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(737, 261, 399, -1));
+        getContentPane().add(jButton6, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 260, 399, -1));
 
         jButton7.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jButton7.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/profile.png"))); // NOI18N
@@ -108,7 +118,7 @@ public class PharmacistDashboard extends javax.swing.JFrame {
                 jButton7ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(737, 386, 399, -1));
+        getContentPane().add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 390, 399, -1));
 
         jButton8.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jButton8.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/exit.png"))); // NOI18N
@@ -118,10 +128,7 @@ public class PharmacistDashboard extends javax.swing.JFrame {
                 jButton8ActionPerformed(evt);
             }
         });
-        getContentPane().add(jButton8, new org.netbeans.lib.awtextra.AbsoluteConstraints(737, 581, 399, -1));
-
-        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/adminDashboardBackground.png"))); // NOI18N
-        getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+        getContentPane().add(jButton8, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 630, 399, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -153,6 +160,15 @@ public class PharmacistDashboard extends javax.swing.JFrame {
         // TODO add your handling code here:
         new Profile(username).setVisible(true);
     }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        new AddMedicine().setVisible(true);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -189,7 +205,6 @@ public class PharmacistDashboard extends javax.swing.JFrame {
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JSeparator jSeparator1;
     // End of variables declaration//GEN-END:variables
 }
