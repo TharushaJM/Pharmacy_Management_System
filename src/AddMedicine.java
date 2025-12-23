@@ -138,11 +138,11 @@ public class AddMedicine extends javax.swing.JFrame {
         }else if(quantity.equals("")){
             JOptionPane.showMessageDialog(null, "Quantity Field Is is Required");
         }else if(!quantity.matches(numberPattern)){
-            JOptionPane.showMessageDialog(null, "Comapny Name Field Is is Invalid");
+            JOptionPane.showMessageDialog(null, "Quantity  Field Is is Invalid");
         }else if(price.equals("")){
-            JOptionPane.showMessageDialog(null, "Comapny Name Field Is is Required");
-        }else if(price.matches(numberPattern)){
-            JOptionPane.showMessageDialog(null, "Comapny Name Field Is is Invalid");
+            JOptionPane.showMessageDialog(null, "Price Field Is is Required");
+        }else if(!price.matches(numberPattern)){
+            JOptionPane.showMessageDialog(null, "Price Field Is is Invalid");
         }else {
             try{
             Connection con = ConnectionProvider.getCon();
