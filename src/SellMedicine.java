@@ -2,21 +2,72 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JOptionPane;
+import dao.ConnectionProvider;
+import java.sql.*;
+import javax.swing.table.TableModel;
 /**
  *
  * @author Tharusha
  */
 public class SellMedicine extends javax.swing.JFrame {
-    
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(SellMedicine.class.getName());
+    
+    public String numberPattern = "^[0-9]*$";
+    private int finalTotalPrice = 0;
+    private String billID= "";
+    private String username = "";
+    
+    
 
     /**
      * Creates new form SellMedicine
      */
     public SellMedicine() {
         initComponents();
+        setLocationRelativeTo(null);
     }
+
+    public SellMedicine(String tempUsername) {
+        initComponents();
+        setLocationRelativeTo(null);
+        username = tempUsername;
+        
+    }
+    
+    private void medicineName(String nameOrUniqueId){
+        DefaultTableModel model = (DefaultTableModel) MedicineTable.getModel();
+        model.setRowCount(0);
+        try{
+            Connection con = ConnectionProvider.getCon();
+            Statement st = con.createStatement();
+            ResultSet rs = st.executeQuery("select * from medicine where name like '"+nameOrUniqueId+"%' or uniqueID like '"+nameOrUniqueId+"%'");
+            
+            while(rs.next()){
+                model.addRow(new Object[]{rs.getString("uniqueID")+"- "+rs.getString("name")});
+            }
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }
+    
+    private void clearMedicineFields(){
+        txtUniqeID.setText("");
+        txtName.setText("");
+        txtCompanyName.setText("");
+        txtPricePerUnit.setText("");
+        txtNoOfUnit.setText("");
+        txtTotalPrice.setText("");
+        
+        
+    }
+    public String getUniqueID(String prefix){
+        return prefix + System.nanoTime();
+        
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -31,21 +82,21 @@ public class SellMedicine extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JSeparator();
         jButton1 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtSearchBar = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        MedicineTable = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        txtUniqeID = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
-        jTextField3 = new javax.swing.JTextField();
+        txtName = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        txtCompanyName = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jTextField5 = new javax.swing.JTextField();
+        txtPricePerUnit = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
-        jTextField6 = new javax.swing.JTextField();
+        txtNoOfUnit = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
-        jTextField7 = new javax.swing.JTextField();
+        txtTotalPrice = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
         jButton2 = new javax.swing.JButton();
@@ -56,6 +107,11 @@ public class SellMedicine extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                formComponentShown(evt);
+            }
+        });
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jLabel1.setBackground(new java.awt.Color(255, 255, 255));
@@ -79,16 +135,21 @@ public class SellMedicine extends javax.swing.JFrame {
         jLabel2.setText("Search");
         getContentPane().add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 90, -1, -1));
 
-        jTextField1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        txtSearchBar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        txtSearchBar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                txtSearchBarActionPerformed(evt);
             }
         });
-        getContentPane().add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 120, 306, -1));
+        txtSearchBar.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtSearchBarKeyReleased(evt);
+            }
+        });
+        getContentPane().add(txtSearchBar, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 120, 306, -1));
 
-        jTable1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        MedicineTable.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        MedicineTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
@@ -96,7 +157,12 @@ public class SellMedicine extends javax.swing.JFrame {
                 "Medicines"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        MedicineTable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                MedicineTableMouseClicked(evt);
+            }
+        });
+        jScrollPane1.setViewportView(MedicineTable);
 
         getContentPane().add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(110, 150, 306, 476));
 
@@ -106,8 +172,8 @@ public class SellMedicine extends javax.swing.JFrame {
         jLabel3.setText("Medicine ID ");
         getContentPane().add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 90, -1, -1));
 
-        jTextField2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        getContentPane().add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 130, 300, -1));
+        txtUniqeID.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        getContentPane().add(txtUniqeID, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 130, 300, -1));
 
         jLabel4.setBackground(new java.awt.Color(255, 255, 255));
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -115,8 +181,8 @@ public class SellMedicine extends javax.swing.JFrame {
         jLabel4.setText("Name");
         getContentPane().add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 200, 45, -1));
 
-        jTextField3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        getContentPane().add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 240, 300, -1));
+        txtName.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        getContentPane().add(txtName, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 240, 300, -1));
 
         jLabel5.setBackground(new java.awt.Color(255, 255, 255));
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -124,8 +190,8 @@ public class SellMedicine extends javax.swing.JFrame {
         jLabel5.setText("Company Name");
         getContentPane().add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 310, -1, -1));
 
-        jTextField4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        getContentPane().add(jTextField4, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 360, 300, -1));
+        txtCompanyName.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        getContentPane().add(txtCompanyName, new org.netbeans.lib.awtextra.AbsoluteConstraints(570, 360, 300, -1));
 
         jLabel6.setBackground(new java.awt.Color(255, 255, 255));
         jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -133,8 +199,8 @@ public class SellMedicine extends javax.swing.JFrame {
         jLabel6.setText("Price Per Unit");
         getContentPane().add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 90, 80, -1));
 
-        jTextField5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        getContentPane().add(jTextField5, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 130, 301, -1));
+        txtPricePerUnit.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        getContentPane().add(txtPricePerUnit, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 130, 301, -1));
 
         jLabel7.setBackground(new java.awt.Color(255, 255, 255));
         jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -142,8 +208,13 @@ public class SellMedicine extends javax.swing.JFrame {
         jLabel7.setText("No of Unit");
         getContentPane().add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 200, -1, -1));
 
-        jTextField6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        getContentPane().add(jTextField6, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 240, 301, -1));
+        txtNoOfUnit.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        txtNoOfUnit.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtNoOfUnitKeyReleased(evt);
+            }
+        });
+        getContentPane().add(txtNoOfUnit, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 240, 301, -1));
 
         jLabel8.setBackground(new java.awt.Color(255, 255, 255));
         jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -151,8 +222,8 @@ public class SellMedicine extends javax.swing.JFrame {
         jLabel8.setText("Total Price");
         getContentPane().add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 310, 65, -1));
 
-        jTextField7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        getContentPane().add(jTextField7, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 360, 301, -1));
+        txtTotalPrice.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        getContentPane().add(txtTotalPrice, new org.netbeans.lib.awtextra.AbsoluteConstraints(930, 360, 301, -1));
 
         jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -206,14 +277,90 @@ public class SellMedicine extends javax.swing.JFrame {
         setVisible(false);
     }//GEN-LAST:event_jButton1ActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void txtSearchBarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSearchBarActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_txtSearchBarActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
+        // TODO add your handling code here:
+        medicineName("");
+        txtUniqeID.setEditable(false);
+        txtName.setEditable(false);
+        txtCompanyName.setEditable(false);
+        txtPricePerUnit.setEditable(false);
+        txtTotalPrice.setEditable(false);
+        
+    }//GEN-LAST:event_formComponentShown
+
+    private void txtSearchBarKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSearchBarKeyReleased
+        // TODO add your handling code here:
+        String search = txtSearchBar.getText();
+        medicineName(search);
+    }//GEN-LAST:event_txtSearchBarKeyReleased
+
+    private void MedicineTableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_MedicineTableMouseClicked
+        // TODO add your handling code here:
+        int index = MedicineTable.getSelectedRow();
+        TableModel model = MedicineTable.getModel();
+        String nameOrUniqueId = model.getValueAt(index, 0).toString();
+        
+        String uniqueID[] = nameOrUniqueId.split("-",0);
+        
+        try{
+            Connection con = ConnectionProvider.getCon();
+            Statement st = con.createStatement();
+            ResultSet rs =  st.executeQuery("select * from medicine where uniqueID='" + uniqueID[0] + "'");
+            
+            while(rs.next()){
+                txtUniqeID.setText(uniqueID[0]);
+                txtName.setText(rs.getString("name"));
+                txtCompanyName.setText(rs.getString("companyName"));
+                txtPricePerUnit.setText(rs.getString("price"));
+                txtNoOfUnit.setText("");
+                txtTotalPrice.setText("");
+                
+            }
+            
+        }catch(Exception e){
+            JOptionPane.showMessageDialog(null, e);
+        }
+    }//GEN-LAST:event_MedicineTableMouseClicked
+
+    private void txtNoOfUnitKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNoOfUnitKeyReleased
+        // TODO add your handling code here:
+       String noOfUnit = txtNoOfUnit.getText();
+    
+    if (!noOfUnit.equals("")) {
+        String price = txtPricePerUnit.getText();
+        
+       
+        if (!noOfUnit.matches(numberPattern)) {
+            JOptionPane.showMessageDialog(null, "Number of Unit Field is Invalid");
+            txtNoOfUnit.setText(""); 
+            txtTotalPrice.setText("");
+            return; 
+        }
+        
+        
+        if (!price.equals("")) {
+            try {
+                int totalPrice = Integer.parseInt(noOfUnit) * Integer.parseInt(price);
+                txtTotalPrice.setText(String.valueOf(totalPrice));
+            } catch (NumberFormatException e) {
+                
+                txtTotalPrice.setText("");
+            }
+        }
+    } else {
+        txtTotalPrice.setText("");
+    }
+        
+    }//GEN-LAST:event_txtNoOfUnitKeyReleased
+;
     /**
      * @param args the command line arguments
      */
@@ -240,6 +387,7 @@ public class SellMedicine extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTable MedicineTable;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
@@ -257,14 +405,13 @@ public class SellMedicine extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
-    private javax.swing.JTextField jTextField4;
-    private javax.swing.JTextField jTextField5;
-    private javax.swing.JTextField jTextField6;
-    private javax.swing.JTextField jTextField7;
+    private javax.swing.JTextField txtCompanyName;
+    private javax.swing.JTextField txtName;
+    private javax.swing.JTextField txtNoOfUnit;
+    private javax.swing.JTextField txtPricePerUnit;
+    private javax.swing.JTextField txtSearchBar;
+    private javax.swing.JTextField txtTotalPrice;
+    private javax.swing.JTextField txtUniqeID;
     // End of variables declaration//GEN-END:variables
 }
