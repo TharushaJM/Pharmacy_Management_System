@@ -18,6 +18,7 @@ import java.io.FileOutputStream;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.pdf.PdfWriter;
 import com.itextpdf.text.pdf.PdfPTable;
+import common.OpenPdf;
 
 
 /**
@@ -240,7 +241,7 @@ public class SellMedicine extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Medicine ID", "Company Name", "Price Per Unit", "No Of Unit", "Total Price"
+                "Medicine ID", "Name", "Company Name", "Price Per Unit", "No Of Units", "Total Price"
             }
         ));
         cartTable.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -355,7 +356,7 @@ public class SellMedicine extends javax.swing.JFrame {
                 Paragraph pharmacyName = new Paragraph("                                    Pharmacy Management System\n");
                 doc.add(pharmacyName);
 
-                Paragraph starLine = new Paragraph("**********************************************************");
+                Paragraph starLine = new Paragraph("**********************************************************************************");
                 doc.add(starLine);
 
                 Paragraph details = new Paragraph(
@@ -394,6 +395,9 @@ public class SellMedicine extends javax.swing.JFrame {
 
                 Paragraph thanksMsg = new Paragraph("Thank You Please Visit Again.");
                 doc.add(thanksMsg);
+                
+                OpenPdf.openById(String.valueOf(billId));
+                
 
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(null, e);
