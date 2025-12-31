@@ -7,6 +7,18 @@ import javax.swing.JOptionPane;
 import dao.ConnectionProvider;
 import java.sql.*;
 import javax.swing.table.TableModel;
+import java.text.SimpleDateFormat;
+import dao.PharmacyUtils;
+
+import java.util.Date;
+import java.util.Calendar;
+
+import java.io.FileOutputStream;
+
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.PdfWriter;
+import com.itextpdf.text.pdf.PdfPTable;
+
 
 /**
  *
@@ -18,8 +30,8 @@ public class SellMedicine extends javax.swing.JFrame {
 
     public String numberPattern = "^[0-9]*$";
     private int finalTotalPrice = 0;
-    private String billID = "";
-    private String username = "";
+    private String billId= "";
+    private String username="";
 
     /**
      * Creates new form SellMedicine
@@ -291,6 +303,109 @@ public class SellMedicine extends javax.swing.JFrame {
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         // TODO add your handling code here:
+        // TODO add your handling code here:
+        if (finalTotalPrice != 0) {
+            billId = getUniqueID("Bill-");
+
+            DefaultTableModel dtm = (DefaultTableModel) cartTable.getModel();
+            if (cartTable.getRowCount() != 0) {
+                for (int i = 0; i < cartTable.getRowCount(); i++) {
+                    try {
+                        Connection con = ConnectionProvider.getCon();
+                        Statement st = con.createStatement();
+                        st.executeUpdate(
+                                "update medicine set quantity=quantity-"
+                                + Integer.parseInt(dtm.getValueAt(i, 4).toString())
+                                + " where uniqueId="
+                                + Integer.parseInt(dtm.getValueAt(i, 0).toString())
+                        );
+                    } catch (Exception e) {
+                        JOptionPane.showMessageDialog(null, e);
+                    }
+                }
+            }
+
+            try {
+                SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
+                Calendar cal = Calendar.getInstance();
+                Connection con = ConnectionProvider.getCon();
+                PreparedStatement ps = con.prepareStatement(
+                        "insert into bill(billId,billDate,totalPaid,generatedBy) values(?,?,?,?)"
+                );
+                ps.setString(1, billId);
+                ps.setString(2, myFormat.format(cal.getTime()));
+                ps.setInt(3, finalTotalPrice);
+                ps.setString(4, username);
+                ps.executeUpdate();
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+
+            // Create Bill
+            com.itextpdf.text.Document doc = new com.itextpdf.text.Document();
+
+            try {
+                PdfWriter.getInstance(
+                        doc,
+                        new FileOutputStream(PharmacyUtils.billPath + "" + billId + ".pdf")
+                );
+                doc.open();
+
+                Paragraph pharmacyName = new Paragraph("                                    Pharmacy Management System\n");
+                doc.add(pharmacyName);
+
+                Paragraph starLine = new Paragraph("**********************************************************");
+                doc.add(starLine);
+
+                Paragraph details = new Paragraph(
+                        "\tBill ID: " + billId + "\nDate: " + new Date() + "\nTotal Paid: " + finalTotalPrice
+                );
+                doc.add(details);
+
+                doc.add(starLine);
+
+                PdfPTable tb1 = new PdfPTable(6);
+                tb1.addCell("Medicine Id");
+                tb1.addCell("Name");
+                tb1.addCell("Company Name");
+                tb1.addCell("Price Per Unit");
+                tb1.addCell("No of Unit");
+                tb1.addCell("Sub Total Price");
+
+                for (int i = 0; i < cartTable.getRowCount(); i++) {
+                    String a = cartTable.getValueAt(i, 0).toString(); // uniqueID
+                    String b = cartTable.getValueAt(i, 1).toString(); // Name
+                    String c = cartTable.getValueAt(i, 2).toString(); // Company Name
+                    String d = cartTable.getValueAt(i, 3).toString(); // Price Per Unit
+                    String e = cartTable.getValueAt(i, 4).toString(); // No of Units
+                    String f = cartTable.getValueAt(i, 5).toString(); // Sub Total
+
+                    tb1.addCell(a);
+                    tb1.addCell(b);
+                    tb1.addCell(c);
+                    tb1.addCell(d);
+                    tb1.addCell(e);
+                    tb1.addCell(f);
+                }
+
+                doc.add(tb1);
+                doc.add(starLine);
+
+                Paragraph thanksMsg = new Paragraph("Thank You Please Visit Again.");
+                doc.add(thanksMsg);
+
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, e);
+            }
+
+            doc.close();
+            setVisible(false);
+            new SellMedicine(username).setVisible(true);
+
+        } else {
+            JOptionPane.showMessageDialog(null, "please add some Medicine to cart");
+        }
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void formComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentShown
